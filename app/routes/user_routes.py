@@ -1,6 +1,11 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.exceptions import NotFound, BadRequest
-from ..services.user_service import create_user, check_password, toggle_status, get_user_by_email
+from ..services.user_service import (
+    create_user,
+    check_password,
+    toggle_status,
+    get_user_by_email,
+)
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -57,9 +62,14 @@ def get_user_details():
     if user is None:
         raise NotFound("User not found")
 
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "status": user.status.value if user.status else None
-    }), 200
+    return (
+        jsonify(
+            {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "status": user.status.value if user.status else None,
+            }
+        ),
+        200,
+    )

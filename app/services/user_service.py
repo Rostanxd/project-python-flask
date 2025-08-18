@@ -24,7 +24,11 @@ def toggle_status(user_id):
     try:
         # Toggle the user status
         current_status = user.status
-        new_status = UserStatusEnum.INACTIVE if current_status == UserStatusEnum.ACTIVE else UserStatusEnum.ACTIVE
+        new_status = (
+            UserStatusEnum.INACTIVE
+            if current_status == UserStatusEnum.ACTIVE
+            else UserStatusEnum.ACTIVE
+        )
         user.status = new_status
 
         # Update the inactive_date when the user status changes to INACTIVE
