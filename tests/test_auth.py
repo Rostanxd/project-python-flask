@@ -1,3 +1,6 @@
+from app.models import UserStatusEnum
+
+
 def test_register_user(client):
     # Prepare the test data
     data = {
@@ -16,6 +19,11 @@ def test_register_user(client):
     json_data = response.get_json()
     assert json_data["message"] == "User registered successfully"
 
+    # Checks that the user is created with status INACTIVE by default
+    user_response = client.get("/user/details?email={}".format(data["email"]))
+    assert user_response.status_code == 200
+    assert user_response.json["status"] == UserStatusEnum.INACTIVE.value
+
 
 def test_login_user(client):
     # First, register a new user
@@ -25,6 +33,12 @@ def test_login_user(client):
         "password": "testpassword",
     }
     client.post("/register", json=register_data)
+
+    # Fetch user information
+    user_response = client.get("/user/details?email={}".format(register_data["email"]))
+
+    # Now, toggle user status to ACTIVE
+    client.post("/user/{}/toggle-status".format(user_response.json["id"]), json={})
 
     # Prepare login data
     login_data = {"email": "testuser@example.com", "password": "testpassword"}
