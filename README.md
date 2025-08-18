@@ -103,6 +103,15 @@ curl -X POST http://127.0.0.1:5000/login \
 -d '{"email":"dev.userson@example.com", "password":"sosecure"}'
 ```
 
+## API calls
+
+Toggle user status
+
+```shell
+curl -X POST http://127.0.0.1:5000/user/<user_id>/toggle-status \
+-H "Content-Type: application/json" \
+-d '{}'
+```
 
 # Tasks
 
