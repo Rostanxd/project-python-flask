@@ -11,6 +11,11 @@ def create_user(username, email, password):
     return {"message": "User registered", "username": new_user.username}
 
 
+def get_user_by_email(email):
+    user = User.query.filter_by(email=email).first()
+    return user
+
+
 def toggle_status(user_id):
     user = db.session.get(User, user_id)
     if user is None:
