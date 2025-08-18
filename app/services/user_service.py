@@ -46,7 +46,8 @@ def check_password(email, password):
     else:
         print("user not found")
 
-    if user.password == password:
+    # User password match and the user status is ACTIVE
+    if user.password == password and user.status == UserStatusEnum.ACTIVE:
         return True
     else:
         return False
