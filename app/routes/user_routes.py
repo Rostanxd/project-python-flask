@@ -1,7 +1,11 @@
 from flask import Blueprint, jsonify, request
-from ..models import User
-from ..extensions import db
-from ..services.user_service import create_user, check_password
+from werkzeug.exceptions import NotFound, BadRequest
+from ..services.user_service import (
+    create_user,
+    check_password,
+    toggle_status,
+    get_user_by_email,
+)
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -34,3 +38,38 @@ def profile():
     # Dummy profile route for the user
     # In a real system, you would have authentication and user session handling
     return jsonify({"message": "User profile information"}), 200
+
+
+@user_bp.route("/user/<int:user_id>/toggle-status", methods=["POST"])
+def user_toggle_status(user_id):
+    try:
+        user = toggle_status(user_id)
+    except NotFound as e:
+        return jsonify({"error": str(e)}), 404
+    except BadRequest as e:
+        return jsonify({"error": str(e)}), 400
+
+    return jsonify({"id": user.id, "status": user.status.value}), 200
+
+
+@user_bp.route("/user/details", methods=["GET"])
+def get_user_details():
+    email = request.args.get("email", type=str)
+    if not email:
+        raise BadRequest("Missing required query parameter: email")
+
+    user = get_user_by_email(email)
+    if user is None:
+        raise NotFound("User not found")
+
+    return (
+        jsonify(
+            {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "status": user.status.value if user.status else None,
+            }
+        ),
+        200,
+    )

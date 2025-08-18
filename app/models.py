@@ -1,4 +1,10 @@
+from enum import Enum
 from app.extensions import db, bcrypt
+
+
+class UserStatusEnum(Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
 
 
 class User(db.Model):
@@ -6,6 +12,10 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
+    status = db.Column(
+        db.Enum(UserStatusEnum), nullable=False, default=UserStatusEnum.INACTIVE
+    )
+    inactive_date = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         return f"<User {self.username}>"
