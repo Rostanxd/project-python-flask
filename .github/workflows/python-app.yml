@@ -1,0 +1,50 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout your code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Python vesrion to 3.12
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Cache Poetry dependencies
+      - name: Cache Poetry virtualenvs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      # Install Poetry
+      - name: Install Poetry
+        run: pip install poetry
+
+      # Install dependencies
+      - name: Install dependencies
+        run: poetry install
+
+      # Run pre-commit hooks
+      - name: Run pre-commit
+        run: poetry run pre-commit run --all-files
+
+      # Run tests
+      - name: Run pytest
+        run: poetry run pytest --verbose
