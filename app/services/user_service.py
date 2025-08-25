@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from werkzeug.exceptions import NotFound, BadRequest
 from ..models import User, UserStatusEnum
-from ..extensions import db, bcrypt
+from ..extensions import db
 
 
 def create_user(username, email, password):
@@ -14,6 +14,11 @@ def create_user(username, email, password):
 def get_user_by_email(email):
     user = User.query.filter_by(email=email).first()
     return user
+
+
+def get_all_users():
+    users = User.query.all()
+    return users
 
 
 def toggle_status(user_id):
