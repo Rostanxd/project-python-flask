@@ -9,14 +9,16 @@ roles_bp = Blueprint("roles_bp", __name__)
 @roles_bp.route("/roles", methods=["POST"])
 def create_role():
     data = request.get_json()
-    role_name = data.get("name")
+    role_name = data.get("role_name")
     department_name = data.get("department_name")
 
     if not role_name or not department_name:
         return jsonify({"error": "role_name and department_name are required"}), 400
 
     # Check for duplicate: same role_name + department_name
-    existing = Role.query.filter_by(role_name=role_name, department_name=department_name).first()
+    existing = Role.query.filter_by(
+        role_name=role_name, department_name=department_name
+    ).first()
 
     # Returns a 400 because the role already exists for that department
     if existing:
