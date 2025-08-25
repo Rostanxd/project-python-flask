@@ -25,3 +25,17 @@ def role_factory(client):
 @pytest.fixture
 def create_test_role(role_factory):
     return role_factory(TEST_ROLE.get("role_name"), TEST_ROLE.get("department_name"))
+
+
+@pytest.fixture
+def role_with_users(client, create_test_role, active_user, inactive_user):
+    """
+    Creates a role and links both the active and inactive users to it.
+    Returns the role object (with role_id).
+    """
+    response = client.post(
+        f"/roles/{create_test_role.role_id}/users",
+        json={"user_ids": [active_user.id, inactive_user.id]},
+    )
+    assert response.status_code == 200
+    return create_test_role
