@@ -17,6 +17,7 @@ def role_factory(client):
             db.session.add(role)
             db.session.commit()
             db.session.refresh(role)
+            return role
 
     return _create_role
 
