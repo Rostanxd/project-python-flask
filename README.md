@@ -103,7 +103,28 @@ curl -X POST http://127.0.0.1:5000/login \
 -d '{"email":"dev.userson@example.com", "password":"sosecure"}'
 ```
 
-## API calls
+Create a Role
+
+```sh
+curl -X POST http://127.0.0.1:5000/roles \
+-H "Content-Type: application/json" \
+-d '{"role_name":"Developer", "department_name":"IT4"}'
+```
+
+The response should look like this if it's ok (status 201):
+
+```json
+{
+  "message": "Roles created successfully",
+  "role": {
+    "id": 1,
+    "role_name": "Developer",
+    "department_name": "IT"
+  }
+}
+```
+
+## More API calls
 
 Toggle user status
 
@@ -111,6 +132,13 @@ Toggle user status
 curl -X POST http://127.0.0.1:5000/user/<user_id>/toggle-status \
 -H "Content-Type: application/json" \
 -d '{}'
+```
+
+Get all the users
+
+```shell
+curl -X GET http://127.0.0.1:5000/users \
+-H "Content-Type: application/json"
 ```
 
 # Tasks
