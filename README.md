@@ -148,6 +148,15 @@ Response (status 201):
 }
 ```
 
+Now, to add user(s) to a role, you can use this API.
+
+
+```sh
+curl -X POST http://127.0.0.1:5000/roles/1/users \
+-H "Content-Type: application/json" \
+-d '{"user_ids":[1]}'
+```
+
 ## More API calls
 
 Toggle user status
