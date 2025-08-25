@@ -23,3 +23,7 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()  # Flask test client to send requests
+
+
+# This includes the fixtures
+pytest_plugins = ["tests.fixtures.users"]
