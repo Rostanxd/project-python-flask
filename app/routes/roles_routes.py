@@ -26,8 +26,12 @@ def create_role():
 
     # Create the role
     try:
-        create(role_name=role_name, department_name=department_name)
+        role = create(role_name=role_name, department_name=department_name)
+        role_payload = role if isinstance(role, dict) else {
+            "id": getattr(role, "role_id", None),
+            "role_name": getattr(role, "role_name", None),
+            "department_name": getattr(role, "department_name", None),
+        }
+        return jsonify({"message": "Roles created successfully", "role": role_payload}), 201
     except Exception:
         return jsonify({"error": "Unexpected error"}), 500
-
-    return jsonify({"message": "Roles created successfully"}), 201
