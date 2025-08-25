@@ -26,4 +26,4 @@ def client(app):
 
 
 # This includes the fixtures
-pytest_plugins = ["tests.fixtures.users"]
+pytest_plugins = ["tests.fixtures.users", "tests.fixtures.roles"]

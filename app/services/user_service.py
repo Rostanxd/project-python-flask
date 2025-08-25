@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
+from sqlalchemy import select
 from werkzeug.exceptions import NotFound, BadRequest
-from ..models import User, UserStatusEnum
+from ..models import User, UserStatusEnum, Role, UserRole
 from ..extensions import db
 
 
@@ -65,3 +66,73 @@ def check_password(email, password):
         return True
     else:
         return False
+
+
+def user_update_roles(user_id, roles):
+    if roles is None:
+        raise ValueError("roles must be provided")
+
+    try:
+        role_ids = {int(r) for r in roles}
+    except (TypeError, ValueError):
+        raise ValueError("roles must be an iterable of numbers")
+
+    # Validate provided role IDs exist
+    if role_ids:
+        existing_rows = db.session.execute(
+            select(Role.role_id).where(Role.role_id.in_(role_ids))
+        ).scalars()
+        existing_ids = set(existing_rows)
+        missing_ids = sorted(role_ids - existing_ids)
+        if missing_ids:
+            raise ValueError(f"Role IDs {missing_ids} do not exist")
+
+    # Current assignments for user
+    current_links = (
+        db.session.query(UserRole.role_id).filter(UserRole.user_id == user_id).all()
+    )
+    current_ids = {rid for (rid,) in current_links}
+
+    to_add = role_ids - current_ids
+    to_remove = current_ids - role_ids
+
+    try:
+        if to_remove:
+            (
+                db.session.query(UserRole)
+                .filter(
+                    UserRole.user_id == user_id,
+                    UserRole.role_id.in_(to_remove),
+                )
+                .delete(synchronize_session=False)
+            )
+
+        # Add new links
+        if to_add:
+            db.session.add_all(
+                [UserRole(user_id=user_id, role_id=rid) for rid in to_add]
+            )
+
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+    # Get the roles by user
+    roles = (
+        db.session.execute(
+            select(Role)
+            .join(UserRole, UserRole.role_id == Role.role_id)
+            .where(UserRole.user_id == user_id)
+        )
+        .scalars()
+        .all()
+    )
+    return [
+        {
+            "id": r.role_id,
+            "role_name": r.role_name,
+            "department_name": r.department_name,
+        }
+        for r in roles
+    ]

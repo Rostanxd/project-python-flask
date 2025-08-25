@@ -2,6 +2,19 @@ import pytest
 from app.models import User, UserStatusEnum
 
 
+ACTIVE_USER = {
+    "username": "active_user",
+    "email": "active@example.test",
+    "status": UserStatusEnum.ACTIVE,
+}
+
+INACTIVE_USER = {
+    "username": "inactive_user",
+    "email": "inactive@example.test",
+    "status": UserStatusEnum.INACTIVE,
+}
+
+
 @pytest.fixture
 def user_factory(client):
     def _create_user(
@@ -23,11 +36,15 @@ def user_factory(client):
 
 @pytest.fixture
 def active_user(user_factory):
-    return user_factory("active_user", "active@example.test", UserStatusEnum.ACTIVE)
+    return user_factory(
+        ACTIVE_USER.get("username"), ACTIVE_USER.get("email"), ACTIVE_USER.get("status")
+    )
 
 
 @pytest.fixture
 def inactive_user(user_factory):
     return user_factory(
-        "inactive_user", "inactive@example.test", UserStatusEnum.INACTIVE
+        INACTIVE_USER.get("username"),
+        INACTIVE_USER.get("email"),
+        INACTIVE_USER.get("status"),
     )

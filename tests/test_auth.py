@@ -1,4 +1,5 @@
 from app.models import UserStatusEnum
+from tests.fixtures.users import ACTIVE_USER
 
 
 def test_register_user(client):
@@ -72,3 +73,41 @@ def test_login_invalid_user(client):
 
     # Assert that the response status code is 401 (Unauthorized)
     assert response.status_code == 401
+
+
+def test_add_role_to_user(client, active_user, create_test_role):
+    response = client.patch(
+        "/user/roles",
+        json={"email": active_user.email, "roles": [create_test_role.role_id]},
+    )
+
+    # Assert that the response status code is 200 (OK)
+    assert response.status_code == 200
+
+
+def test_add_role_to_not_exist_user(client, create_test_role):
+    response = client.patch(
+        "/user/roles",
+        json={"email": ACTIVE_USER.get("email"), "roles": [create_test_role.role_id]},
+    )
+    assert response.status_code == 404
+
+
+def test_add_role_not_exist(client, active_user):
+    response = client.patch(
+        "/user/roles", json={"email": active_user.email, "roles": [1]}
+    )
+    assert response.status_code == 400
+
+
+def test_invalid_payload(client, active_user, create_test_role):
+    response = client.patch(
+        "/user/roles", json={"email": ACTIVE_USER.get("email"), "roles": ["abc"]}
+    )
+    assert response.status_code == 400
+
+    response = client.patch(
+        "/user/roles",
+        json={"email": ACTIVE_USER.get("email"), "roles": create_test_role.role_id},
+    )
+    assert response.status_code == 400

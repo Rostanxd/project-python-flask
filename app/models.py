@@ -74,6 +74,13 @@ class Role(db.Model):
         ),
     )
 
+    def to_dict(self):
+        return {
+            "role_id": self.role_id,
+            "role_name": self.role_name,
+            "department_name": self.department_name,
+        }
+
     def __repr__(self):
         return f"<Role {self.role_name} ({self.department_name})>"
 
