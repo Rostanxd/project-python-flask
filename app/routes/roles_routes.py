@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 
+from app.extensions import db
 from app.models import Role
-from app.services.role_service import create
+from app.services.role_service import create, update_role_users
 
 roles_bp = Blueprint("roles_bp", __name__)
 
@@ -42,3 +43,23 @@ def create_role():
         )
     except Exception:
         return jsonify({"error": "Unexpected error"}), 500
+
+
+@roles_bp.route("/roles/<int:role_id>/users", methods=["POST"])
+def assign_users_to_role(role_id: int):
+    data = request.get_json(silent=True) or {}
+    user_ids = data.get("user_ids")
+
+    # Get the role from the db
+    role = db.session.get(Role, role_id)
+    if role is None:
+        return jsonify({"error": "Role not found"}), 404
+
+    try:
+        updated_role = update_role_users(role_id=role_id, user_ids=user_ids)
+        return jsonify({"message": "Role updated successfully", **updated_role}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        print("Unexpected error: {}".format(str(e)))
+        return jsonify({"error": "Unexpected Error"}), 500
