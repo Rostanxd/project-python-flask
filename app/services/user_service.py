@@ -80,8 +80,7 @@ def user_update_roles(user_id, roles):
     # Validate provided role IDs exist
     if role_ids:
         existing_rows = db.session.execute(
-            select(Role.role_id)
-            .where(Role.role_id.in_(role_ids))
+            select(Role.role_id).where(Role.role_id.in_(role_ids))
         ).scalars()
         existing_ids = set(existing_rows)
         missing_ids = sorted(role_ids - existing_ids)
@@ -90,9 +89,7 @@ def user_update_roles(user_id, roles):
 
     # Current assignments for user
     current_links = (
-        db.session.query(UserRole.role_id)
-        .filter(UserRole.user_id == user_id)
-        .all()
+        db.session.query(UserRole.role_id).filter(UserRole.user_id == user_id).all()
     )
     current_ids = {rid for (rid,) in current_links}
 
@@ -131,8 +128,11 @@ def user_update_roles(user_id, roles):
         .scalars()
         .all()
     )
-    return [{
-        "id": r.role_id,
-        "role_name": r.role_name,
-        "department_name": r.department_name,
-    } for r in roles]
+    return [
+        {
+            "id": r.role_id,
+            "role_name": r.role_name,
+            "department_name": r.department_name,
+        }
+        for r in roles
+    ]
