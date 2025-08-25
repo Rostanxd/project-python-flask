@@ -4,7 +4,8 @@ from ..services.user_service import (
     create_user,
     check_password,
     toggle_status,
-    get_user_by_email, get_all_users,
+    get_user_by_email,
+    get_all_users,
 )
 
 user_bp = Blueprint("user_bp", __name__)
