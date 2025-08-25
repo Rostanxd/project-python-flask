@@ -111,7 +111,7 @@ curl -X POST http://127.0.0.1:5000/roles \
 -d '{"role_name":"Developer", "department_name":"IT4"}'
 ```
 
-The response should look like this if it's ok (status 201):
+Response (status 201):
 
 ```json
 {
@@ -121,6 +121,30 @@ The response should look like this if it's ok (status 201):
     "role_name": "Developer",
     "department_name": "IT"
   }
+}
+```
+
+Add role(s) to a user
+
+```sh
+curl -X PATCH http://127.0.0.1:5000/user/roles \
+-H "Content-Type: application/json" \
+-d '{"email":"dev.userson@example.com", "roles":[1]}'
+```
+
+Response (status 201):
+```json
+{
+  "email": "dev.userson@example.com",
+  "id": 1,
+  "roles": [
+    {
+      "department_name": "IT",
+      "id": 1,
+      "role_name": "Developer"
+    }
+  ],
+  "username": "Dev Userson"
 }
 ```
 
