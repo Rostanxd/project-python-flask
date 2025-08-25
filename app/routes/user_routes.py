@@ -5,6 +5,7 @@ from ..services.user_service import (
     check_password,
     toggle_status,
     get_user_by_email,
+    get_all_users,
 )
 
 user_bp = Blueprint("user_bp", __name__)
@@ -38,6 +39,12 @@ def profile():
     # Dummy profile route for the user
     # In a real system, you would have authentication and user session handling
     return jsonify({"message": "User profile information"}), 200
+
+
+@user_bp.route("/users", methods=["GET"])
+def get_users():
+    users = get_all_users()
+    return jsonify([u.to_dict() for u in users]), 200
 
 
 @user_bp.route("/user/<int:user_id>/toggle-status", methods=["POST"])
