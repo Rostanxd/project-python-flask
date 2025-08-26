@@ -25,6 +25,9 @@ def test_register_user(client):
     assert user_response.status_code == 200
     assert user_response.json["status"] == UserStatusEnum.INACTIVE.value
 
+    # Check if the profile was created as well
+    assert json_data.get('user', {}).get('profile', {}).get('id', 0) != 0
+
 
 def test_login_user(client):
     # First, register a new user
