@@ -31,6 +31,10 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = env_str("TEST_DATABASE_URI", "sqlite:///:memory:")  # In-memory DB for testing
+    SQLALCHEMY_DATABASE_URI = env_str(
+        "TEST_DATABASE_URI", "sqlite:///:memory:"
+    )  # In-memory DB for testing
     SQLALCHEMY_TRACK_MODIFICATIONS = env_bool("SQLALCHEMY_TRACK_MODIFICATIONS", False)
-    WTF_CSRF_ENABLED = env_bool("WTF_CSRF_ENABLED", False)  # Disable CSRF for easier testing
+    WTF_CSRF_ENABLED = env_bool(
+        "WTF_CSRF_ENABLED", False
+    )  # Disable CSRF for easier testing
