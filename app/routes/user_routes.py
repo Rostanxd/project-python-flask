@@ -27,7 +27,12 @@ def register():
     # Create a profile for this user
     create_profile(user_id=user.id, first_name=username, last_name="", bio="")
 
-    return jsonify({"message": "User registered successfully", "user": {**user.to_dict()}}), 201
+    return (
+        jsonify(
+            {"message": "User registered successfully", "user": {**user.to_dict()}}
+        ),
+        201,
+    )
 
 
 @user_bp.route("/login", methods=["POST"])

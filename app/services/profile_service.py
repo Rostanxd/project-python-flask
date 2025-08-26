@@ -9,18 +9,22 @@ def get_all_profiles():
     return profiles
 
 
-def create_profile(user_id: int, first_name: str ="", last_name: str="", bio: str = ""):
-    new_profile = Profile(user_id=user_id, first_name=first_name, last_name=last_name, bio=bio)
+def create_profile(
+    user_id: int, first_name: str = "", last_name: str = "", bio: str = ""
+):
+    new_profile = Profile(
+        user_id=user_id, first_name=first_name, last_name=last_name, bio=bio
+    )
     db.session.add(new_profile)
     db.session.commit()
     return new_profile
 
 
 def update_profile_data(
-        profile_id: int,
-        first_name: Optional[str],
-        last_name: Optional[str],
-        bio: Optional[str],
+    profile_id: int,
+    first_name: Optional[str],
+    last_name: Optional[str],
+    bio: Optional[str],
 ):
     profile = db.session.get(Profile, profile_id)
     if profile is None:

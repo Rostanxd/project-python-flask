@@ -38,7 +38,9 @@ def update_profile(profile_id: int):
         return jsonify({"error": "Profile not found"}), 404
 
     try:
-        profile = update_profile_data(profile_id=profile_id, first_name=first_name, last_name=last_name, bio=bio)
+        profile = update_profile_data(
+            profile_id=profile_id, first_name=first_name, last_name=last_name, bio=bio
+        )
         return jsonify(profile.to_dict()), 200
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 404
