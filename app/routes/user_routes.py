@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.exceptions import NotFound, BadRequest
 
-from ..models import Role
+from ..services.profile_service import create_profile
 from ..services.user_service import (
     create_user,
     check_password,
@@ -21,7 +21,12 @@ def register():
     email = data.get("email")
     password = data.get("password")
 
+    # Create user
     user = create_user(username, email, password)
+
+    # Create a profile for this user
+    create_profile(user_id=user.id, first_name=username, last_name="", bio="")
+
     return jsonify({"message": "User registered successfully"}), 201
 
 
