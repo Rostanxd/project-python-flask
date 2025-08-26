@@ -19,7 +19,31 @@ def test_fetch_profile(client, create_test_profile):
 
 def test_profile_not_found(client):
     # Send a GET request to get all the profiles in the system
-    response = client.get("/profiles/{}".format(TEST_PROFILE.get('id')))
+    response = client.get("/profiles/1")
+
+    # Asser that the response is 404 (OK)
+    assert response.status_code == 404
+
+
+def test_update_profile(client, create_test_profile):
+    # Send a GET request to get all the profiles in the system
+    response = client.patch("/profiles/{}".format(create_test_profile.id), json={
+        "first_name": "John",
+        "last_name": "Doe",
+        "bio": "I am a test bio!"
+    })
 
     # Asser that the response is 200 (OK)
+    assert response.status_code == 200
+
+
+def test_update_profile_not_found(client):
+    # Send a GET request to get all the profiles in the system
+    response = client.patch("/profiles/1", json={
+        "first_name": "John",
+        "last_name": "Doe",
+        "bio": "I am a test bio!"
+    })
+
+    # Asser that the response is 404 (profile not found)
     assert response.status_code == 404
