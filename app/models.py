@@ -93,3 +93,42 @@ class UserRole(db.Model):
 
     def __repr__(self):
         return f"<UserRole user_id={self.user_id} role_id={self.role_id}>"
+
+
+class Profile(db.Model):
+    __tablename__ = "profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False, unique=True
+    )
+    first_name = db.Column(db.String(80), nullable=True)
+    last_name = db.Column(db.String(80), nullable=True)
+    bio = db.Column(db.String(500), nullable=True)
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        server_default=db.func.now(),
+        nullable=False,
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        server_default=db.func.now(),
+        onupdate=db.func.now(),
+        nullable=False,
+    )
+
+    # One-to-one relationship: a user has at most one profile
+    user = db.relationship("User", backref=db.backref("profile", uselist=False))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "bio": self.bio,
+            "user": {**self.user.to_dict()},
+        }
+
+    def __repr__(self):
+        return f"<Profile user_id={self.user_id} first_name={self.first_name} last_name={self.last_name}>"
