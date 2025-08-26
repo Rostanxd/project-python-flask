@@ -37,13 +37,6 @@ def login():
         return jsonify({"message": "Invalid credentials"}), 401
 
 
-@user_bp.route("/profile", methods=["GET"])
-def profile():
-    # Dummy profile route for the user
-    # In a real system, you would have authentication and user session handling
-    return jsonify({"message": "User profile information"}), 200
-
-
 @user_bp.route("/users", methods=["GET"])
 def get_users():
     users = get_all_users()
