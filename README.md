@@ -188,6 +188,13 @@ curl -X GET http://127.0.0.1:5000/profiles/1 \
 -H "Content-Type: application/json"
 ```
 
+Update profile by id
+```shell
+curl -X PATCH http://127.0.0.1:5000/profiles/1 \
+-H "Content-Type: application/json" \
+-d '{"first_name":"Jhon","last_name":"Doe","bio":"I am a test user."}'
+```
+
 # Tasks
 
 For each task please follow this process:
