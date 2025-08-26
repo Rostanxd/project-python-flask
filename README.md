@@ -174,6 +174,20 @@ curl -X GET http://127.0.0.1:5000/users \
 -H "Content-Type: application/json"
 ```
 
+Get all profiles
+
+```shell
+curl -X GET http://127.0.0.1:5000/profiles \
+-H "Content-Type: application/json"
+```
+
+Get profile by id
+
+```shell
+curl -X GET http://127.0.0.1:5000/profiles/1 \
+-H "Content-Type: application/json"
+```
+
 # Tasks
 
 For each task please follow this process:
