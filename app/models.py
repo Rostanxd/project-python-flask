@@ -52,6 +52,30 @@ class User(db.Model):
             }
             for r in self.roles
         ]
+
+        # Serialize the related profile (if any) without causing recursion
+        p = getattr(self, "profile", None)
+        if p is not None:
+            data["profile"] = {
+                "id": p.id,
+                "user_id": p.user_id,
+                "first_name": p.first_name,
+                "last_name": p.last_name,
+                "bio": p.bio,
+                "created_at": (
+                    p.created_at.isoformat()
+                    if hasattr(p.created_at, "isoformat")
+                    else p.created_at
+                ),
+                "updated_at": (
+                    p.updated_at.isoformat()
+                    if hasattr(p.updated_at, "isoformat")
+                    else p.updated_at
+                ),
+            }
+        else:
+            data["profile"] = None
+
         return data
 
     def __repr__(self):
