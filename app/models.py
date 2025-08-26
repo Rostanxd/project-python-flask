@@ -52,6 +52,30 @@ class User(db.Model):
             }
             for r in self.roles
         ]
+
+        # Serialize the related profile (if any) without causing recursion
+        p = getattr(self, "profile", None)
+        if p is not None:
+            data["profile"] = {
+                "id": p.id,
+                "user_id": p.user_id,
+                "first_name": p.first_name,
+                "last_name": p.last_name,
+                "bio": p.bio,
+                "created_at": (
+                    p.created_at.isoformat()
+                    if hasattr(p.created_at, "isoformat")
+                    else p.created_at
+                ),
+                "updated_at": (
+                    p.updated_at.isoformat()
+                    if hasattr(p.updated_at, "isoformat")
+                    else p.updated_at
+                ),
+            }
+        else:
+            data["profile"] = None
+
         return data
 
     def __repr__(self):
@@ -93,3 +117,42 @@ class UserRole(db.Model):
 
     def __repr__(self):
         return f"<UserRole user_id={self.user_id} role_id={self.role_id}>"
+
+
+class Profile(db.Model):
+    __tablename__ = "profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id"), nullable=False, unique=True
+    )
+    first_name = db.Column(db.String(80), nullable=True)
+    last_name = db.Column(db.String(80), nullable=True)
+    bio = db.Column(db.String(500), nullable=True)
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        server_default=db.func.now(),
+        nullable=False,
+    )
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        server_default=db.func.now(),
+        onupdate=db.func.now(),
+        nullable=False,
+    )
+
+    # One-to-one relationship: a user has at most one profile
+    user = db.relationship("User", backref=db.backref("profile", uselist=False))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "bio": self.bio,
+            "user": {**self.user.to_dict()},
+        }
+
+    def __repr__(self):
+        return f"<Profile user_id={self.user_id} first_name={self.first_name} last_name={self.last_name}>"

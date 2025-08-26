@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.exceptions import NotFound, BadRequest
 
-from ..models import Role
+from ..services.profile_service import create_profile
 from ..services.user_service import (
     create_user,
     check_password,
@@ -21,8 +21,18 @@ def register():
     email = data.get("email")
     password = data.get("password")
 
+    # Create user
     user = create_user(username, email, password)
-    return jsonify({"message": "User registered successfully"}), 201
+
+    # Create a profile for this user
+    create_profile(user_id=user.id, first_name=username, last_name="", bio="")
+
+    return (
+        jsonify(
+            {"message": "User registered successfully", "user": {**user.to_dict()}}
+        ),
+        201,
+    )
 
 
 @user_bp.route("/login", methods=["POST"])
@@ -35,13 +45,6 @@ def login():
         return jsonify({"message": "Login successful", "email": email}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
-
-
-@user_bp.route("/profile", methods=["GET"])
-def profile():
-    # Dummy profile route for the user
-    # In a real system, you would have authentication and user session handling
-    return jsonify({"message": "User profile information"}), 200
 
 
 @user_bp.route("/users", methods=["GET"])
