@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  dfd_db:
+    image: postgres:13.3
+    container_name: victory_local_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: victory
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - ./localdb/dfd_data:/var/lib/postgresql
+      - ./postgres-data:/var/lib/postgresql/data
