@@ -8,11 +8,48 @@ Ensure you can run the application locally by cloning it.
 
 These directions assume you will use `poetry` for dependency and environment management.
 
+### Environment Variables
+Be sure that you have the `.env` file before to continue. If that is not the case, do not hesitate to ask for it someone in the team.
 
 ## Install dependencies
 ```sh
 poetry install
 ```
+
+## Database creation
+We are using PostgresSQL as the database running in a Docker container. Be sure you are running docker and then run the
+next command from the project root path:
+
+```sh
+$ cd victory_infra
+$ docker compose -f local.yml up -d
+```
+
+Once the postgres database is running, you can run the migration scripts to create the tables:
+
+```sh
+flask db upgrade
+```
+
+## Starting the application
+
+```sh
+poetry run python app.py
+```
+
+You should see something like this:
+
+```
+/code/project-python-flask >poetry run python run.py
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 413-423-614
+ ```
 
 ## Building the software
 
@@ -62,27 +99,6 @@ tests/test_auth.py::test_login_invalid_user PASSED                              
 ============================================================================================== 3 passed in 0.03s ===============================================================================================
 
 ```
-
-## Starting the application
-
-```sh
-export FLASK_ENV=development # use the development settings
-poetry run python app.py
-```
-
-You should see something like this:
-
-```
-/code/project-python-flask >poetry run python run.py
- * Serving Flask app 'app'
- * Debug mode: on
-WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on http://127.0.0.1:5000
-Press CTRL+C to quit
- * Restarting with stat
- * Debugger is active!
- * Debugger PIN: 413-423-614
- ```
 
 ### Exercising the API
 
