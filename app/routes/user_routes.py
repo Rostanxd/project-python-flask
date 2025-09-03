@@ -1,6 +1,10 @@
-from flask import Blueprint, jsonify, request
+from datetime import datetime, timezone, timedelta
+from flask import Blueprint, jsonify, request, current_app
 from werkzeug.exceptions import NotFound, BadRequest
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
 
+from ..models import User
 from ..services.profile_service import create_profile
 from ..services.user_service import (
     create_user,
@@ -10,6 +14,7 @@ from ..services.user_service import (
     get_all_users,
     user_update_roles,
 )
+from ..utils.token import verify_token
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -102,8 +107,16 @@ def register():
     email = data.get("email")
     password = data.get("password")
 
+    # Existing user
+    existing_user = get_user_by_email(email)
+    if existing_user:
+        # This message can change since you are telling to external users that someone has an account with that email in our system
+        return jsonify({"error": "User already exists"}), 400
+
+    hashed_password = generate_password_hash(password)
+
     # Create user
-    user = create_user(username, email, password)
+    user = create_user(username, email, hashed_password)
 
     # Create a profile for this user
     create_profile(user_id=user.id, first_name=username, last_name="", bio="")
@@ -155,14 +168,13 @@ def login():
             message:
               type: string
               example: "Login successful"
-            email:
+            token:
               type: string
-              format: email
-              example: "<email@example.com>"
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIyNjZjZGRkNi0zMzc5LTRlZGUtYjQ3MS01MjI5MGYzMjk2MGEiLCJleHAiOjE3NTY5MjQwODB9.zmOtEW2Z5BGvVW8UplNxRb73GfA-kMVJXe4RYSiDoVw"
         examples:
           application/json:
             message: "Login successful"
-            email: "<email@example.com>"
+            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwdWJsaWNfaWQiOiIyNjZjZGRkNi0zMzc5LTRlZGUtYjQ3MS01MjI5MGYzMjk2MGEiLCJleHAiOjE3NTY5MjQwODB9.zmOtEW2Z5BGvVW8UplNxRb73GfA-kMVJXe4RYSiDoVw"
       401:
         description: Invalid credentials
         schema:
@@ -179,14 +191,28 @@ def login():
     email = data.get("email")
     password = data.get("password")
 
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"message": "Invalid credentials"}), 401
+
     if check_password(email, password) is True:
-        return jsonify({"message": "Login successful", "email": email}), 200
+        secret = current_app.config.get("SECRET_KEY")
+        token = jwt.encode(
+            {
+                "public_id": user.public_id,
+                "exp": datetime.now(timezone.utc) + timedelta(hours=1),
+            },
+            secret,
+            algorithm="HS256",
+        )
+        return jsonify({"message": "Login successful", "token": token}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
 
 @user_bp.route("/users", methods=["GET"])
-def get_users():
+@verify_token
+def get_users(_):
     """
     Retrieve a list of users.
     ---
