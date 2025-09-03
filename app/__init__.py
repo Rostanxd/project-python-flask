@@ -4,7 +4,6 @@ from .extensions import db, migrate, bcrypt
 from .config import Config
 from .routes import register_blueprints
 
-
 swagger_template = {
     "swagger": "2.0",
     "info": {
@@ -12,7 +11,19 @@ swagger_template = {
         "description": "API documentation",
         "version": "1.0.0",
     },
-    "basePath": "/",  # base path for endpoints
+    "basePath": "/",
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Token header using the Bearer scheme. Example: 'Bearer {token}'"
+        }
+    },
+    "security": [
+        {"Bearer": []}
+    ],
+
 }
 
 swagger_config = {
