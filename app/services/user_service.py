@@ -1,12 +1,16 @@
 from datetime import datetime, timezone
 from sqlalchemy import select
 from werkzeug.exceptions import NotFound, BadRequest
+from werkzeug.security import check_password_hash
+
+import uuid
+
 from ..models import User, UserStatusEnum, Role, UserRole
 from ..extensions import db
 
 
 def create_user(username, email, password):
-    new_user = User(username=username, email=email, password=password)
+    new_user = User(username=username, email=email, password=password, public_id=uuid.uuid4())
     db.session.add(new_user)
     db.session.commit()
     return new_user
@@ -56,7 +60,7 @@ def check_password(email, password):
         return False
 
     # User password match and the user status is ACTIVE
-    if user.password == password and user.status == UserStatusEnum.ACTIVE:
+    if check_password_hash(user.password, password) and user.status == UserStatusEnum.ACTIVE:
         return True
     else:
         return False
