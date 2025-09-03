@@ -10,7 +10,7 @@ swagger_template = {
     "info": {
         "title": "Victory APIs",
         "description": "API documentation",
-        "version": "1.0.0"
+        "version": "1.0.0",
     },
     "basePath": "/",  # base path for endpoints
 }
@@ -21,13 +21,13 @@ swagger_config = {
         {
             "endpoint": "apispec_1",
             "route": "/apispec_1.json",
-            "rule_filter": lambda rule: True,   # include all endpoints
-            "model_filter": lambda tag: True,   # include all models
+            "rule_filter": lambda rule: True,  # include all endpoints
+            "model_filter": lambda tag: True,  # include all models
         }
     ],
     "static_url_path": "/flasgger_static",
     "swagger_ui": True,
-    "specs_route": "/apidocs/"
+    "specs_route": "/apidocs/",
 }
 
 
