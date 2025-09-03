@@ -119,11 +119,14 @@ curl -X POST http://127.0.0.1:5000/login \
 -d '{"email":"dev.userson@example.com", "password":"sosecure"}'
 ```
 
-Create a Role
+For the rest of the endpoints we are using JWT for authentication. This should be sent in the request header as "Authorization".
+
+Creating a Role
 
 ```sh
 curl -X POST http://127.0.0.1:5000/roles \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer <token>" \
 -d '{"role_name":"Developer", "department_name":"IT4"}'
 ```
 
@@ -145,6 +148,7 @@ Add role(s) to a user
 ```sh
 curl -X PATCH http://127.0.0.1:5000/user/roles \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer <token>" \
 -d '{"email":"dev.userson@example.com", "roles":[1]}'
 ```
 
@@ -170,6 +174,7 @@ Now, to add user(s) to a role, you can use this API.
 ```sh
 curl -X POST http://127.0.0.1:5000/roles/1/users \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer <token>" \
 -d '{"user_ids":[1]}'
 ```
 
@@ -180,6 +185,7 @@ Toggle user status
 ```shell
 curl -X POST http://127.0.0.1:5000/user/<user_id>/toggle-status \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer <token>" \
 -d '{}'
 ```
 
@@ -188,6 +194,7 @@ Get all the users
 ```shell
 curl -X GET http://127.0.0.1:5000/users \
 -H "Content-Type: application/json"
+-H "Authorization: Bearer <token>" \
 ```
 
 Get all profiles
@@ -195,6 +202,7 @@ Get all profiles
 ```shell
 curl -X GET http://127.0.0.1:5000/profiles \
 -H "Content-Type: application/json"
+-H "Authorization: Bearer <token>" \
 ```
 
 Get profile by id
@@ -202,12 +210,14 @@ Get profile by id
 ```shell
 curl -X GET http://127.0.0.1:5000/profiles/1 \
 -H "Content-Type: application/json"
+-H "Authorization: Bearer <token>" \
 ```
 
 Update profile by id
 ```shell
 curl -X PATCH http://127.0.0.1:5000/profiles/1 \
 -H "Content-Type: application/json" \
+-H "Authorization: Bearer <token>" \
 -d '{"first_name":"Jhon","last_name":"Doe","bio":"I am a test user."}'
 ```
 
