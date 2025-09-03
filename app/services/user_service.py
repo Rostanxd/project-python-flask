@@ -52,14 +52,8 @@ def toggle_status(user_id):
 def check_password(email, password):
     user = User.query.filter_by(email=email).first()
 
-    if user:
-        pass
-        # print(f"found user: {user.username}")
-        # print(f"email: {email}")
-        # print(f"password: {password}")
-        # print(f"db password: {user.password}")
-    else:
-        print("user not found")
+    if not user:
+        return False
 
     # User password match and the user status is ACTIVE
     if user.password == password and user.status == UserStatusEnum.ACTIVE:
