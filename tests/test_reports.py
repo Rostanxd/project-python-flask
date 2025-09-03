@@ -1,8 +1,8 @@
 from app.models import UserStatusEnum
 
 
-def test_check_all_users(client, active_user, inactive_user):
-    resp = client.get("/users")
+def test_check_all_users(client, auth_header, active_user, inactive_user):
+    resp = client.get("/users", headers=auth_header)
     assert resp.status_code == 200
     data = resp.get_json()
     assert isinstance(data, list)
