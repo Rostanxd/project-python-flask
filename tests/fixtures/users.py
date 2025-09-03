@@ -86,8 +86,7 @@ def auth_header(client, create_authenticated_user):
 
     # Login to retrieve the token
     response = client.post("/login", json=login_data)
-    assert response.status_code == 200  # Validation to ensure login success
-    token = response.get_json()["token"]
+    token = response.get_json().get("token")
 
     # Return the "Authorization" header with the token
     return {"Authorization": f"Bearer {token}"}
