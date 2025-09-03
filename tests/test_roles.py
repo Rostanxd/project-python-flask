@@ -14,7 +14,9 @@ def test_role_creation(client, auth_header):
 
 def test_invalid_payload(client, auth_header):
     # Send a POST request to register a new role incompleted ("department_name" is missing")
-    response = client.post("/roles", json={"role_name": TEST_ROLE.get("role_name")}, headers=auth_header)
+    response = client.post(
+        "/roles", json={"role_name": TEST_ROLE.get("role_name")}, headers=auth_header
+    )
 
     # Assert that the response code is 400 (Bad Request)
     assert response.status_code == 400
@@ -34,7 +36,7 @@ def test_add_users(client, auth_header, create_test_role, active_user, inactive_
     response = client.post(
         "/roles/{}/users".format(create_test_role.role_id),
         json={"user_ids": [active_user.id, inactive_user.id]},
-        headers=auth_header
+        headers=auth_header,
     )
 
     # Assert that the response code is 200 (OK)
@@ -59,7 +61,7 @@ def test_remove_users(client, auth_header, role_with_users, active_user, inactiv
     response = client.post(
         f"/roles/{role_with_users.role_id}/users",
         json={"user_ids": []},
-        headers=auth_header
+        headers=auth_header,
     )
     assert response.status_code == 200
 
@@ -73,7 +75,7 @@ def test_invalid_user_payload(client, auth_header, create_test_role, active_user
     response = client.post(
         f"/roles/{create_test_role.role_id}/users",
         json={"user_ids": active_user.id},
-        headers=auth_header
+        headers=auth_header,
     )
     assert response.status_code == 400
 
@@ -95,7 +97,7 @@ def test_invalid_user_id(client, auth_header, create_test_role):
     response = client.post(
         "/roles/{}/users".format(create_test_role.role_id),
         json={"user_ids": [ACTIVE_USER.get("id")]},
-        headers=auth_header
+        headers=auth_header,
     )
 
     # Assert that the response code is 400 (user is not valid)

@@ -24,7 +24,10 @@ def test_login_user(client, create_authenticated_user):
     client.post("/register", json=TEST_USER)
 
     # Prepare login data
-    login_data = {"email": TEST_USER.get("email"), "password": TEST_USER.get("password")}
+    login_data = {
+        "email": TEST_USER.get("email"),
+        "password": TEST_USER.get("password"),
+    }
 
     # Send a POST request to login
     response = client.post("/login", json=login_data)
@@ -79,19 +82,24 @@ def test_add_role_to_not_exist_user(client, auth_header, create_test_role):
 
 def test_add_role_not_exist(client, auth_header, active_user):
     response = client.patch(
-        "/user/roles", json={"email": active_user.email, "roles": [1]}, headers=auth_header,
+        "/user/roles",
+        json={"email": active_user.email, "roles": [1]},
+        headers=auth_header,
     )
     assert response.status_code == 400
 
 
 def test_invalid_payload(client, auth_header, active_user, create_test_role):
     response = client.patch(
-        "/user/roles", json={"email": ACTIVE_USER.get("email"), "roles": ["abc"]}, headers=auth_header,
+        "/user/roles",
+        json={"email": ACTIVE_USER.get("email"), "roles": ["abc"]},
+        headers=auth_header,
     )
     assert response.status_code == 400
 
     response = client.patch(
         "/user/roles",
-        json={"email": ACTIVE_USER.get("email"), "roles": create_test_role.role_id}, headers=auth_header
+        json={"email": ACTIVE_USER.get("email"), "roles": create_test_role.role_id},
+        headers=auth_header,
     )
     assert response.status_code == 400

@@ -29,14 +29,18 @@ INACTIVE_USER = {
 @pytest.fixture
 def user_factory(client):
     def _create_user(
-            username: str, email: str, status: UserStatusEnum, password: str = "testpass123"
+        username: str, email: str, status: UserStatusEnum, password: str = "testpass123"
     ):
         app = client.application
         db = app.extensions["sqlalchemy"]
         hashed_password = generate_password_hash(password)
         with app.app_context():
             user = User(
-                username=username, email=email, password=hashed_password, status=status, public_id=uuid.uuid4()
+                username=username,
+                email=email,
+                password=hashed_password,
+                status=status,
+                public_id=uuid.uuid4(),
             )
             db.session.add(user)
             db.session.commit()
@@ -52,7 +56,7 @@ def create_authenticated_user(user_factory):
         TEST_USER.get("username"),
         TEST_USER.get("email"),
         UserStatusEnum.ACTIVE,
-        TEST_USER.get("password")
+        TEST_USER.get("password"),
     )
 
 
@@ -62,7 +66,7 @@ def active_user(user_factory):
         ACTIVE_USER.get("username"),
         ACTIVE_USER.get("email"),
         ACTIVE_USER.get("status"),
-        ACTIVE_USER.get("password")
+        ACTIVE_USER.get("password"),
     )
 
 
@@ -72,7 +76,7 @@ def inactive_user(user_factory):
         INACTIVE_USER.get("username"),
         INACTIVE_USER.get("email"),
         INACTIVE_USER.get("status"),
-        INACTIVE_USER.get("password")
+        INACTIVE_USER.get("password"),
     )
 
 
@@ -82,7 +86,10 @@ def auth_header(client, create_authenticated_user):
     Fixture to log in a user and provide the Authorization header
     """
     # Prepare login data
-    login_data = {"email": TEST_USER.get('email'), "password": TEST_USER.get('password')}
+    login_data = {
+        "email": TEST_USER.get("email"),
+        "password": TEST_USER.get("password"),
+    }
 
     # Login to retrieve the token
     response = client.post("/login", json=login_data)

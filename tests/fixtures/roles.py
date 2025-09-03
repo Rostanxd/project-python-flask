@@ -36,6 +36,6 @@ def role_with_users(client, auth_header, create_test_role, active_user, inactive
     response = client.post(
         f"/roles/{create_test_role.role_id}/users",
         json={"user_ids": [active_user.id, inactive_user.id]},
-        headers=auth_header
+        headers=auth_header,
     )
     return create_test_role

@@ -17,13 +17,10 @@ swagger_template = {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header",
-            "description": "JWT Token header using the Bearer scheme. Example: 'Bearer {token}'"
+            "description": "JWT Token header using the Bearer scheme. Example: 'Bearer {token}'",
         }
     },
-    "security": [
-        {"Bearer": []}
-    ],
-
+    "security": [{"Bearer": []}],
 }
 
 swagger_config = {
