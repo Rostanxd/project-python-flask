@@ -9,6 +9,70 @@ roles_bp = Blueprint("roles_bp", __name__)
 
 @roles_bp.route("/roles", methods=["POST"])
 def create_role():
+    """
+    Create a new role.
+    ---
+    tags:
+      - Roles
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        required: true
+        description: JSON payload to create a role
+        schema:
+          type: object
+          required:
+            - role_name
+            - department_name
+          properties:
+            role_name:
+              type: string
+              example: "<role name>"
+            department_name:
+              type: string
+              example: "<department name>"
+    responses:
+      201:
+        description: Role created successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Roles created successfully"
+            role:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                role_name:
+                  type: string
+                  example: "<role name>"
+                department_name:
+                  type: string
+                  example: "<department name>"
+      400:
+        description: Invalid payload or duplicate role
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "role_name and department_name are required"
+      500:
+        description: Unexpected server error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Unexpected error"
+    """
     data = request.get_json()
     role_name = data.get("role_name")
     department_name = data.get("department_name")
@@ -47,6 +111,92 @@ def create_role():
 
 @roles_bp.route("/roles/<int:role_id>/users", methods=["POST"])
 def assign_users_to_role(role_id: int):
+    """
+    Assign users to a role.
+    ---
+    tags:
+      - Roles
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: path
+        name: role_id
+        type: integer
+        required: true
+        description: ID of the role to update
+      - in: body
+        name: body
+        required: true
+        description: JSON payload with user IDs to assign
+        schema:
+          type: object
+          required:
+            - user_ids
+          properties:
+            user_ids:
+              type: array
+              items:
+                type: integer
+              example: [1, 2, 3]
+    responses:
+      200:
+        description: Role updated successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Role updated successfully"
+            role:
+              type: object
+              properties:
+                department_name:
+                  type: string
+                  example: "IT"
+                role_id:
+                  type: integer
+                  example: 1
+                role_name:
+                  type: string
+                  example: "DEV"
+            users:
+              type: array
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: "user@example.com"
+                  id:
+                    type: integer
+                    example: 1
+      400:
+        description: Invalid payload
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "user_ids must be a non-empty list of positive integers"
+      404:
+        description: Role not found
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Role not found"
+      500:
+        description: Unexpected server error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Unexpected Error"
+    """
     data = request.get_json(silent=True) or {}
     user_ids = data.get("user_ids")
 

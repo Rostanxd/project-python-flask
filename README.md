@@ -211,6 +211,9 @@ curl -X PATCH http://127.0.0.1:5000/profiles/1 \
 -d '{"first_name":"Jhon","last_name":"Doe","bio":"I am a test user."}'
 ```
 
+### Swagger Docs
+We have integrated Swagger in this project to check the APIs using this documentation you can do it in the URL: http://127.0.0.1:5000/apidocs/
+
 # Tasks
 
 For each task please follow this process:
