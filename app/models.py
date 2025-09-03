@@ -14,11 +14,12 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(128), nullable=False)
+    password = db.Column(db.String(500), nullable=False)
     status = db.Column(
         db.Enum(UserStatusEnum), nullable=False, default=UserStatusEnum.INACTIVE
     )
     inactive_date = db.Column(db.DateTime, nullable=True)
+    public_id = db.Column(db.String(50), unique=True)
 
     # Many-to-many via association table
     roles = db.relationship("Role", secondary="users_roles", back_populates="users")
