@@ -4,11 +4,14 @@ from app.models import Profile
 
 from app.services.profile_service import get_all_profiles, update_profile_data
 
+from ..utils.token import verify_token
+
 profiles_bp = Blueprint("profiles_bp", __name__)
 
 
 @profiles_bp.route("/profiles", methods=["GET"])
-def get_profiles():
+@verify_token
+def get_profiles(_):
     """
     Retrieve a list of profiles.
     ---
@@ -100,7 +103,8 @@ def get_profiles():
 
 
 @profiles_bp.route("/profiles/<int:profile_id>", methods=["GET"])
-def get_profile(profile_id: int):
+@verify_token
+def get_profile(_, profile_id: int):
     """
     Retrieve a profile by ID.
     ---
@@ -192,7 +196,8 @@ def get_profile(profile_id: int):
 
 
 @profiles_bp.route("/profiles/<int:profile_id>", methods=["PATCH"])
-def update_profile(profile_id: int):
+@verify_token
+def update_profile(_, profile_id: int):
     """
     Update a profile by ID.
     ---
