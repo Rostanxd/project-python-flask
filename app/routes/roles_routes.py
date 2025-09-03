@@ -4,11 +4,14 @@ from app.extensions import db
 from app.models import Role
 from app.services.role_service import create, update_role_users
 
+from ..utils.token import verify_token
+
 roles_bp = Blueprint("roles_bp", __name__)
 
 
 @roles_bp.route("/roles", methods=["POST"])
-def create_role():
+@verify_token
+def create_role(_):
     """
     Create a new role.
     ---
@@ -110,7 +113,8 @@ def create_role():
 
 
 @roles_bp.route("/roles/<int:role_id>/users", methods=["POST"])
-def assign_users_to_role(role_id: int):
+@verify_token
+def assign_users_to_role(_, role_id: int):
     """
     Assign users to a role.
     ---

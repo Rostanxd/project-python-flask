@@ -1,7 +1,7 @@
 from datetime import datetime, timezone, timedelta
 from flask import Blueprint, jsonify, request, current_app
 from werkzeug.exceptions import NotFound, BadRequest
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 import jwt
 
 from ..models import User
@@ -262,6 +262,7 @@ def get_users(_):
 
 
 @user_bp.route("/user/<int:user_id>/toggle-status", methods=["POST"])
+@verify_token
 def user_toggle_status(user_id):
     """
     Toggle a user's status.
@@ -329,6 +330,7 @@ def user_toggle_status(user_id):
 
 
 @user_bp.route("/user/details", methods=["GET"])
+@verify_token
 def get_user_details():
     """
     Get user details by email.
@@ -415,7 +417,8 @@ def get_user_details():
 
 
 @user_bp.route("/user/roles", methods=["PATCH"])
-def update_user_roles():
+@verify_token
+def update_user_roles(_):
     """
     Update a user's roles by email.
     ---
